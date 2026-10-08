@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía API RESTful - Laravel con MongoDB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #1e1e1e;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #13aa52 0%, #116149 100%);
+            padding: 40px;
+            text-align: center;
+            border-bottom: 3px solid #13aa52;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        h2 {
+            color: #43b02a;
+            font-size: 2em;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #43b02a;
+        }
+
+        h3 {
+            color: #64b5f6;
+            font-size: 1.5em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            color: #81c784;
+            font-size: 1.2em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p, li {
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: #ffab40;
+        }
+
+        code {
+            background: #2d2d2d;
+            color: #4fc3f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            font-size: 0.95em;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .badge.get {
+            background: #4caf50;
+        }
+
+        .badge.post {
+            background: #2196f3;
+        }
+
+        .badge.put {
+            background: #ff9800;
+        }
+
+        .badge.delete {
+            background: #f44336;
+        }
+
+        .note {
+            background: #263238;
+            border-left: 4px solid #64b5f6;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .warning {
+            background: #3e2723;
+            border-left: 4px solid #ff9800;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .success {
+            background: #1b5e20;
+            border-left: 4px solid #4caf50;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #424242;
+            margin: 40px 0;
+        }
+
+        .toc {
+            background: #263238;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            color: #81c784;
+        }
+
+        .toc ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .toc li {
+            margin-bottom: 8px;
+        }
+
+        .toc a {
+            color: #64b5f6;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .toc a:hover {
+            color: #90caf9;
+            text-decoration: underline;
+        }
+
+        footer {
+            background: #263238;
+            padding: 20px;
+            text-align: center;
+            color: #9e9e9e;
+            border-top: 2px solid #424242;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Guía Completa: API RESTful de Libros con Laravel y MongoDB</h1>
+            <p style="color: #e0e0e0; margin-top: 10px;">Aprende a crear una API profesional con MongoDB paso a paso</p>
+        </header>
+
+        <div class="content">
+            <div class="toc">
+                <h3>📋 Índice de Contenidos</h3>
+                <ul>
+                    <li><a href="#paso-0">0. Crear el proyecto e instalar MongoDB</a></li>
+                    <li><a href="#paso-1">1. Diferencia entre routes/web.php y routes/api.php</a></li>
+                    <li><a href="#paso-2">2. Crear el Modelo Libro para MongoDB</a></li>
+                    <li><a href="#paso-3">3. Crear el Controlador API</a></li>
+                    <li><a href="#paso-4">4. Definir rutas en routes/api.php</a></li>
+                    <li><a href="#paso-5">5. Implementar métodos en el controlador</a></li>
+                    <li><a href="#paso-6">6. Códigos HTTP explicados</a></li>
+                    <li><a href="#paso-7">7. Métodos Eloquent para MongoDB explicados</a></li>
+                    <li><a href="#paso-8">8. ¿Qué es un API RESTful?</a></li>
+                    <li><a href="#paso-9">9. Probar cada ruta</a></li>
+                </ul>
+            </div>
+
+            <section id="paso-0">
+                <h2>0. Crear el proyecto e instalar MongoDB (Si es nuevo)</h2>
+
+                <h3>Paso 0.1: Crear proyecto con Composer</h3>
+                <pre><code class="language-bash">composer create-project laravel/laravel nombre-proyecto</code></pre>
+
+                <h3>Paso 0.2: Entrar al directorio e instalar el paquete de MongoDB</h3>
+                <pre><code class="language-bash">cd nombre-proyecto
+composer require mongodb/laravel-mongodb</code></pre>
+
+                <h3>Paso 0.3: Configurar base de datos MongoDB</h3>
+                <p>Abrir el archivo <code>.env</code> y configurar la conexión a MongoDB:</p>
+                <pre><code class="language-env">DB_CONNECTION=mongodb
+DB_HOST=127.0.0.1
+DB_PORT=27017
+DB_DATABASE=nombre_de_tu_base_de_datos
+DB_USERNAME=
+DB_PASSWORD=</code></pre>
+
+                <h3>Paso 0.4: Configurar `config/database.php`</h3>
+                <p>Asegurarse de que exista la conexión <code>mongodb</code> en <code>config/database.php</code>:</p>
+                <pre><code class="language-php">'connections' => [
+    'mongodb' => [
+        'driver' => 'mongodb',
+        'host' => env('DB_HOST', '127.0.0.1'),
+        'port' => env('DB_PORT', 27017),
+        'database' => env('DB_DATABASE', 'laravel_db'),
+        'username' => env('DB_USERNAME', ''),
+        'password' => env('DB_PASSWORD', ''),
+        'options' => [
+            'database' => env('DB_AUTHENTICATION_DATABASE', 'admin'),
+        ],
+    ],
+],</code></pre>
+
+                <div class="note">
+                    <p><strong>📝 Nota sobre MongoDB:</strong> Al ser una base de datos NoSQL basada en colecciones de documentos JSON, no requiere ejecutar migraciones de tablas estructuradas (como en MySQL).</p>
+                </div>
+            </section>
+
+            <hr>
+
+            <section id="paso-1">
+                <h2>1. Diferencia entre <code>routes/web.php</code> y <code>routes/api.php</code></h2>
+
+                <h3><code>routes/web.php</code></h3>
+                <ul>
+                    <li><strong>Para qué:</strong> Rutas para páginas web (HTML)</li>
+                    <li><strong>Usa:</strong> Sesiones, cookies, CSRF protection</li>
+                    <li><strong>Retorna:</strong> Vistas (Blade templates)</li>
+                    <li><strong>Ejemplo:</strong> Rutas para tu sitio web tradicional</li>
+                    <li><strong>URL:</strong> <code>http://localhost:8000/ruta</code></li>
+                </ul>
+
+                <h3><code>routes/api.php</code></h3>
+                <ul>
+                    <li><strong>Para qué:</strong> Rutas para APIs (JSON)</li>
+                    <li><strong>Usa:</strong> Sin sesiones, sin cookies, sin CSRF</li>
+                    <li><strong>Retorna:</strong> JSON (datos)</li>
+                    <li><strong>Ejemplo:</strong> Endpoints para aplicaciones móviles, frontend separado (React, Vue, Angular)</li>
+                    <li><strong>URL:</strong> <code>http://localhost:8000/api/ruta</code> (prefijo <code>/api</code> automático)</li>
+                </ul>
+
+                <h3>Crear soporte para API en Laravel 11</h3>
+                <div class="warning">
+                    <p><strong>⚠️ Importante:</strong> Laravel 11 ya NO incluye <code>routes/api.php</code> por defecto. Debes instalarlo:</p>
+                </div>
+                <pre><code class="language-bash">php artisan install:api</code></pre>
+            </section>
+
+            <hr>
+
+            <section id="paso-2">
+                <h2>2. Crear el Modelo Libro para MongoDB</h2>
+                <pre><code class="language-bash">php artisan make:model Libro</code></pre>
+                <p>Abrir <code>app/Models/Libro.php</code> y extender de <code>MongoDB\Laravel\Eloquent\Model</code>:</p>
+                <pre><code class="language-php">&lt;?php
+
+namespace App\Models;
+
+use MongoDB\Laravel\Eloquent\Model;
+
+class Libro extends Model
+{
+    // Especificar la conexión y la colección de MongoDB
+    protected $connection = 'mongodb';
+    protected $collection = 'libros';
+
+    // Campos que se pueden llenar masivamente
+    protected $fillable = [
+        'titulo',
+        'autor',
+        'genero',
+        'anio_publicacion'
+    ];
+}</code></pre>
+                <ul>
+                    <li><strong>Para qué:</strong> Permite interactuar directamente con la colección `libros` de MongoDB utilizando Eloquent.</li>
+                </ul>
+            </section>
+
+            <hr>
+
+            <section id="paso-3">
+                <h2>3. Crear el Controlador API</h2>
+                <pre><code class="language-bash">php artisan make:controller Api/LibroController</code></pre>
+                <ul>
+                    <li><strong>Para qué:</strong> Crea el controlador en <code>app/Http/Controllers/Api/LibroController.php</code></li>
+                </ul>
+            </section>
+
+            <hr>
+
+            <section id="paso-4">
+                <h2>4. Definir rutas en <code>routes/api.php</code></h2>
+
+                <div class="warning">
+                    <p><strong>⚠️ IMPORTANTE:</strong> Agregar el <code>use</code> del controlador al inicio del archivo:</p>
+                </div>
+                <pre><code class="language-php">&lt;?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\LibroController;</code></pre>
+
+                <p>Luego agregar las rutas:</p>
+
+                <h3><span class="badge get">GET</span> Ruta 1 - Listar todos los libros</h3>
+                <pre><code class="language-php">Route::get('/libros', [LibroController::class, 'index']);</code></pre>
+
+                <h3><span class="badge post">POST</span> Ruta 2 - Crear un libro</h3>
+                <pre><code class="language-php">Route::post('/libros', [LibroController::class, 'store']);</code></pre>
+
+                <h3><span class="badge get">GET</span> Ruta 3 - Mostrar un libro específico</h3>
+                <pre><code class="language-php">Route::get('/libros/{id}', [LibroController::class, 'show']);</code></pre>
+
+                <h3><span class="badge put">PUT</span> Ruta 4 - Actualizar un libro</h3>
+                <pre><code class="language-php">Route::put('/libros/{id}', [LibroController::class, 'update']);</code></pre>
+
+                <h3><span class="badge delete">DELETE</span> Ruta 5 - Eliminar un libro</h3>
+                <pre><code class="language-php">Route::delete('/libros/{id}', [LibroController::class, 'destroy']);</code></pre>
+            </section>
+
+            <hr>
+
+            <section id="paso-5">
+                <h2>5. Implementar métodos en el controlador</h2>
+
+                <p><strong>Archivo completo:</strong> <code>app/Http/Controllers/Api/LibroController.php</code></p>
+                <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Libro;
+use Illuminate\Http\Request;
+
+class LibroController extends Controller
+{
+    /**
+     * Obtiene todos los libros de la colección de MongoDB
+     */
+    public function index()
+    {
+        $libros = Libro::all();
+        return response()->json($libros, 200);
+    }
+
+    /**
+     * Crea un nuevo documento de libro en MongoDB
+     */
+    public function store(Request $request)
+    {
+        $validated =$request->validate([
+            'titulo' => 'required|string|max:255',
+            'autor' => 'required|string|max:255',
+            'genero' => 'nullable|string|max:255',
+            'anio_publicacion' => 'nullable|integer',
+        ]);
+        
+        $libro = Libro::create($validated);
+        return response()->json($libro, 201);
+    }
+
+    /**
+     * Muestra un libro específico por su ID de MongoDB (ObjectId)
+     */
+    public function show($id)
+    {
+        $libro = Libro::findOrFail($id);
+        return response()->json($libro, 200);
+    }
+
+    /**
+     * Actualiza un documento de libro existente
+     */
+    public function update(Request $request,$id)
+    {
+        $libro = Libro::findOrFail($id);
+        
+        $validated =$request->validate([
+            'titulo' => 'string|max:255',
+            'autor' => 'string|max:255',
+            'genero' => 'nullable|string|max:255',
+            'anio_publicacion' => 'nullable|integer',
+        ]);
+        
+        $libro->update($validated);
+        return response()->json($libro, 200);
+    }
+
+    /**
+     * Elimina un libro de MongoDB
+     */
+    public function destroy($id)
+    {
+        $libro = Libro::findOrFail($id);$libro->delete();
+        
+        return response()->json(null, 204);
+    }
+}</code></pre>
+            </section>
+
+            <hr>
+
+            <section id="paso-6">
+                <h2>6. Códigos HTTP explicados - Para qué sirve cada uno</h2>
+
+                <h3>200 (OK)</h3>
+                <ul>
+                    <li><strong>Para qué:</strong> Decir "todo salió bien"</li>
+                    <li><strong>Cuándo:</strong> Al consultar o actualizar datos exitosamente</li>
+                </ul>
+
+                <h3>201 (Created)</h3>
+                <ul>
+                    <li><strong>Para qué:</strong> Decir "se creó algo nuevo correctamente"</li>
+                    <li><strong>Cuándo:</strong> Al crear un nuevo registro/documento en MongoDB</li>
+                </ul>
+
+                <h3>204 (No Content)</h3>
+                <ul>
+                    <li><strong>Para qué:</strong> Decir "se eliminó correctamente, no hay nada que mostrar"</li>
+                </ul>
+
+                <h3>404 (Not Found)</h3>
+                <ul>
+                    <li><strong>Para qué:</strong> Decir "no encontré lo que buscas"</li>
+                    <li><strong>Cuándo:</strong> Cuando el ObjectId no existe en la colección de MongoDB</li>
+                </ul>
+
+                <h3>422 (Unprocessable Entity)</h3>
+                <ul>
+                    <li><strong>Para qué:</strong> Decir "los datos que enviaste están mal"</li>
+                </ul>
+            </section>
+
+            <hr>
+
+            <section id="paso-7">
+                <h2>7. Métodos Eloquent explicados - Para qué sirve cada uno</h2>
+
+                <h3><code>Libro::all()</code></h3>
+                <ul>
+                    <li><strong>Para qué:</strong> Traer todos los documentos de la colección `libros`</li>
+                </ul>
+
+                <h3><code>Libro::create($data)</code></h3>
+                <ul>
+                    <li><strong>Para qué:</strong> Insertar un nuevo documento JSON en MongoDB</li>
+                </ul>
+
+                <h3><code>Libro::findOrFail($id)</code></h3>
+                <ul>
+                    <li><strong>Para qué:</strong> Buscar un documento por su `_id` de MongoDB (ObjectId). Lanza 404 si no existe.</li>
+                </ul>
+
+                <h3><code>$libro->update($data)</code></h3>
+                <ul>
+                    <li><strong>Para qué:</strong> Actualizar los campos del documento en MongoDB</li>
+                </ul>
+
+                <h3><code>$libro->delete()</code></h3>
+                <ul>
+                    <li><strong>Para qué:</strong> Eliminar el documento de la colección</li>
+                </ul>
+            </section>
+
+            <hr>
+
+            <section id="paso-8">
+                <h2>8. ¿Qué es un API RESTful?</h2>
+
+                <p>Un <strong>API RESTful</strong> sigue los principios de la arquitectura REST (Representational State Transfer) independientemente de si usa bases de datos relacionales (MySQL) o NoSQL (MongoDB).</p>
+
+                <h3>Principios que cumple esta API:</h3>
+                <ol>
+                    <li><strong>Usa verbos HTTP correctamente:</strong> GET, POST, PUT, DELETE</li>
+                    <li><strong>Usa recursos (sustantivos en plural):</strong> <code>/api/libros</code></li>
+                    <li><strong>Sin estado (Stateless):</strong> Cada petición es independiente</li>
+                    <li><strong>Retorna códigos HTTP estándar:</strong> 200, 201, 204, 404, 422</li>
+                    <li><strong>Intercambia datos en formato JSON</strong></li>
+                </ol>
+            </section>
+
+            <hr>
+
+            <section id="paso-9">
+                <h2>9. Probar cada ruta</h2>
+
+                <h3>Iniciar servidor de desarrollo</h3>
+                <pre><code class="language-bash">php artisan serve</code></pre>
+
+                <h3>Ejemplos de peticiones cURL:</h3>
+
+                <h4><span class="badge get">GET</span> 1. Ver todos los libros</h4>
+                <pre><code class="language-bash">curl http://localhost:8000/api/libros</code></pre>
+
+                <h4><span class="badge post">POST</span> 2. Crear un libro</h4>
+                <pre><code class="language-bash">curl -X POST http://localhost:8000/api/libros \
+  -H "Content-Type: application/json" \
+  -d '{"titulo":"Don Quijote","autor":"Miguel de Cervantes","genero":"Novela","anio_publicacion":1605}'</code></pre>
+
+                <h4><span class="badge get">GET</span> 3. Ver un libro específico (usando _id de MongoDB)</h4>
+                <pre><code class="language-bash">curl http://localhost:8000/api/libros/65f1a2b3c4d5e6f7a8b9c0d1</code></pre>
+
+                <h4><span class="badge put">PUT</span> 4. Actualizar un libro</h4>
+                <pre><code class="language-bash">curl -X PUT http://localhost:8000/api/libros/65f1a2b3c4d5e6f7a8b9c0d1 \
+  -H "Content-Type: application/json" \
+  -d '{"titulo":"Don Quijote de la Mancha"}'</code></pre>
+
+                <h4><span class="badge delete">DELETE</span> 5. Eliminar un libro</h4>
+                <pre><code class="language-bash">curl -X DELETE http://localhost:8000/api/libros/65f1a2b3c4d5e6f7a8b9c0d1</code></pre>
+            </section>
+        </div>
+
+        <footer>
+            <p>📚 Guía API RESTful de Libros con Laravel y MongoDB | 2025</p>
+            <p>Creado con ❤️ para aprender desarrollo de APIs</p>
+        </footer>
+    </div>
+
+    <script>
+        hljs.highlightAll();
+    </script>
+</body>
+</html>
